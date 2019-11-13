@@ -1,0 +1,46 @@
+OPEN INPUT TB170-FILE, TI21-FILE.
+OPEN OUTPUT REPORT-FILE.
+PERFORM READ-TB170-FILE THRU READ-TB170-FILE-EXIT
+                        UNTIL EOF = "Y".         
+CLOSE TB170-FILE, TI21-FILE, REPORT-FILE.       
+STOP RUN.                                       
+
+ READ-TB170-FILE.                                       
+         READ TB170-FILE AT END MOVE "Y" TO EOF.       
+         IF DEV-STATUS NOT = "00"                       
+         DISPLAY "TB170 FILE IS NOT OPENED" DEV-STATUS 
+         END-IF.                                       
+         MOVE "N" TO EOF.                               
+         PERFORM READ-TI21-FILE THRU READ-TI21-FILE-EXIT
+                                 UNTIL EOF = "Y".       
+                                                       
+ READ-TB170-FILE-EXIT.                                 
+         EXIT.                                         
+ READ-TI21-FILE.                                       
+         READ TB170-FILE AT END MOVE "Y" TO EOF.       
+         IF TEST-STATUS NOT = "00"                     
+         DISPLAY "TI21 FILE IS NOT OPENED" TEST-STATUS 
+         END-IF.                                       
+         IF (TB-NAME = TI-NAME) AND (TB-SIZE = TI-SIZE)
+         DISPLAY "THE PROGRAM NAME AND SIZE IS SAME"   
+         ELSE                                           
+         IF (TB-NAME = TI-NAME) AND (TB-SIZE < TI-SIZE)
+
+         PERFORM REPORT-WRITE-FROM-BOTH1               
+         ELSE                                         
+         IF (TB-NAME = TI-NAME) AND (TB-SIZE > TI-SIZE)
+         PERFORM REPORT-WRITE-FROM-BOTH1               
+         END-IF                                       
+         END-IF                                       
+         END-IF.                                       
+ READ-TI21-FILE-EXIT.                                 
+         EXIT.                                         
+ REPORT-WRITE-FROM-BOTH1.                             
+         MOVE TB-SIZE     TO R-TB-SIZE.               
+         MOVE TB-NAME     TO R-TB-NAME.               
+         MOVE TB-MONTH    TO R-TB-MONTH.               
+         MOVE TB-DATE     TO R-TB-DATE.               
+         MOVE TI-SIZE     TO R-TI-SIZE.               
+         MOVE TI-MONTH    TO R-TI-MONTH.               
+         MOVE TI-DATE     TO R-TI-DATE.               
+         WRITE REPORT-REC.             
