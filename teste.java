@@ -1,4 +1,3 @@
-import java.i.*;
 public class CopyFile1 {
 
    public static void main(String args[]) throws IOException {  
