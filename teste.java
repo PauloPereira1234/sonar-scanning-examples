@@ -1,4 +1,4 @@
-public class CopyFile1 {
+public CopyFile1 {
 
    public static void main(String args[]) throws IOException {  
       FileInputStream in = null;
